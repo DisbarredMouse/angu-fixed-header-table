@@ -6,14 +6,14 @@
     <title>AngularJS Fixed Header Scrollable Table</title>
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
     <style>
-        .table {
+        .table-400 {
             height: 400px;
         }
     </style>
 </head>
 
 <body>
-    <table class="table table-bordered" fixed-header>
+    <table class="table table-400 table-bordered" fixed-header>
         <thead>
             <tr>
                 <th>Header 1</th>
@@ -39,6 +39,37 @@
             </tr>
         </tfoot>
     </table>
+
+    <table class="table table-bordered" fixed-header max-table-height="210px">
+        <thead>
+            <tr>
+                <th>Header 1</th>
+                <th>Header 2</th>
+                <th>Header 3</th>
+                <th>Header 4</th>
+            </tr>
+        </thead>
+        <tbody ng-init="items = [1,2,3,4]">
+            <tr ng-repeat="item in items">
+                <td>Row {{item}} Col 1</td>
+                <td>Row {{item}} Col 2</td>
+                <td>Row {{item}} Col 3</td>
+                <td>Row {{item}} Col 4</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>Footer 1</td>
+                <td>Footer 2</td>
+                <td>Footer 3</td>
+                <td>Footer 4</td>
+            </tr>
+        </tfoot>
+    </table>
+    <p>
+        <button type="button" class="btn btn-primary btn-sm" ng-click="items.push(items.length + 1)">Add an item</button>
+        <button type="button" class="btn btn-primary btn-sm" ng-click="items.pop()">Delete an item</button>
+    </p>
 
     <script src="https://code.angularjs.org/1.2.16/angular.js"></script>
     <script src="../angu-fixed-header-table.js"></script>
