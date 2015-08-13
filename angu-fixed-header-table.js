@@ -56,7 +56,7 @@
                     wrapper.style.visibility = 'invisible';
                     wrapper.appendChild(clone);
                     angular.element(clone.querySelectorAll('thead, tbody, tfoot')).css('display', '');
-                    $elem.parent()[0].appendChild(wrapper);
+                    $elem.after(wrapper);
 
                     // set widths of columns
                     var tableSections = ['tbody', 'thead', 'tfoot'];
