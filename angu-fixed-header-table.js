@@ -57,11 +57,22 @@
                     wrapper.appendChild(clone);
                     angular.element(clone.querySelectorAll('thead, tbody, tfoot')).css('display', '');
                     $elem.parent()[0].appendChild(wrapper);
+
                     // set widths of columns
-                    angular.forEach(clone.querySelectorAll('table[fixed-header] > thead > tr:first-child > th'), function (clonedThElem, i) {
-                        var clonedTdElems = clone.querySelector('table[fixed-header] > tbody > tr:first-child > th:nth-child(' + (i + 1) + '), table[fixed-header] > tbody > tr:first-child > td:nth-child(' + (i + 1) + ')');
+                    var clonedTheadRow = clone.querySelector('table[fixed-header] > thead > tr:first-child');
+                    var clonedTrElems = clone.querySelectorAll('table[fixed-header] > tbody > tr');
+                    var clonedTrElem;
+                    var firstTrIdx = 0;
+                    for (; firstTrIdx < clonedTrElems.length; firstTrIdx++) { // Find the first tbody row that has the same number of columns as the header (no colspan'd cells)
+                        if (clonedTrElems[firstTrIdx].childElementCount === clonedTheadRow.childElementCount) {
+                            clonedTrElem = clonedTrElems[firstTrIdx];
+                            break;
+                        }
+                    }
+                    angular.forEach(clonedTheadRow.querySelectorAll('tr:first-child > th'), function (clonedThElem, i) {
+                        var clonedTdElems = clonedTrElem ? clonedTrElem.querySelector('th:nth-child(' + (i + 1) + '):not([colspan]), td:nth-child(' + (i + 1) + '):not([colspan])') : null;
                         var columnWidth = clonedTdElems ? clonedTdElems.offsetWidth : clonedThElem.offsetWidth;
-                        var tdElems = elem.querySelector('table[fixed-header] > tbody > tr:first-child > th:nth-child(' + (i + 1) + '), table[fixed-header] > tbody > tr:first-child > td:nth-child(' + (i + 1) + ')');
+                        var tdElems = elem.querySelector('table[fixed-header] > tbody > tr:nth-child(' + (firstTrIdx + 1) + ') > th:nth-child(' + (i + 1) + '), table[fixed-header] > tbody > tr:nth-child(' + (firstTrIdx + 1) + ') > td:nth-child(' + (i + 1) + ')');
                         var thElems = elem.querySelector('table[fixed-header] > thead > tr:first-child > th:nth-child(' + (i + 1) + '), table[fixed-header] > thead > tr:first-child > td:nth-child(' + (i + 1) + ')');
                         var tfElems = elem.querySelector('table[fixed-header] > tfoot > tr:first-child > th:nth-child(' + (i + 1) + '), table[fixed-header] > tfoot > tr:first-child > td:nth-child(' + (i + 1) + ')');
                         if (tdElems)  {
