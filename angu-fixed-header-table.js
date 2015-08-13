@@ -72,8 +72,7 @@
                                 cells[k].style.width = cloneRows[j].children[k].offsetWidth + 'px';
                             }
                         }
-                    };
-
+                    }
                     
                     //Done with the math. We can get rid of the clone.
                     angular.element(wrapper).remove();
