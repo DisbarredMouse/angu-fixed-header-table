@@ -56,35 +56,23 @@
                     wrapper.style.visibility = 'invisible';
                     wrapper.appendChild(clone);
                     angular.element(clone.querySelectorAll('thead, tbody, tfoot')).css('display', '');
-                    $elem.parent()[0].appendChild(wrapper);
+                    $elem.after(wrapper);
 
                     // set widths of columns
-                    var clonedTheadRow = clone.querySelector('table[fixed-header] > thead > tr:first-child');
-                    var clonedTrElems = clone.querySelectorAll('table[fixed-header] > tbody > tr');
-                    var clonedTrElem;
-                    var firstTrIdx = 0;
-                    for (; firstTrIdx < clonedTrElems.length; firstTrIdx++) { // Find the first tbody row that has the same number of columns as the header (no colspan'd cells)
-                        if (clonedTrElems[firstTrIdx].childElementCount === clonedTheadRow.childElementCount) {
-                            clonedTrElem = clonedTrElems[firstTrIdx];
-                            break;
+                    var tableSections = ['tbody', 'thead', 'tfoot'];
+                    for (var i = 0; i < tableSections.length; i++) {
+                        var lastRowLength = 0;
+                        var rows = elem.querySelectorAll('table[fixed-header] > ' + tableSections[i] +' > tr');
+                        var cloneRows = clone.querySelectorAll('table[fixed-header] > ' + tableSections[i] +' > tr');
+                        for (var j = 0; j < rows.length; j++) {
+                            var cells = rows[j].children;
+                            if (cells.length === lastRowLength) continue; // Don't bother applying width to rows that have the same number of columns as the prev. row
+                            lastRowLength = cells.length;
+                            for (var k = 0; k < cells.length; k++) {
+                                cells[k].style.width = cloneRows[j].children[k].offsetWidth + 'px';
+                            }
                         }
                     }
-                    angular.forEach(clonedTheadRow.querySelectorAll('tr:first-child > th'), function (clonedThElem, i) {
-                        var clonedTdElems = clonedTrElem ? clonedTrElem.querySelector('th:nth-child(' + (i + 1) + '):not([colspan]), td:nth-child(' + (i + 1) + '):not([colspan])') : null;
-                        var columnWidth = clonedTdElems ? clonedTdElems.offsetWidth : clonedThElem.offsetWidth;
-                        var tdElems = elem.querySelector('table[fixed-header] > tbody > tr:nth-child(' + (firstTrIdx + 1) + ') > th:nth-child(' + (i + 1) + '), table[fixed-header] > tbody > tr:nth-child(' + (firstTrIdx + 1) + ') > td:nth-child(' + (i + 1) + ')');
-                        var thElems = elem.querySelector('table[fixed-header] > thead > tr:first-child > th:nth-child(' + (i + 1) + '), table[fixed-header] > thead > tr:first-child > td:nth-child(' + (i + 1) + ')');
-                        var tfElems = elem.querySelector('table[fixed-header] > tfoot > tr:first-child > th:nth-child(' + (i + 1) + '), table[fixed-header] > tfoot > tr:first-child > td:nth-child(' + (i + 1) + ')');
-                        if (tdElems)  {
-                            tdElems.style.width = columnWidth + 'px';
-                        }
-                        if (thElems) {
-                            thElems.style.width = columnWidth + 'px';
-                        }
-                        if (tfElems)  {
-                            tfElems.style.width = columnWidth + 'px';
-                        }
-                    });
                     
                     //Done with the math. We can get rid of the clone.
                     angular.element(wrapper).remove();
@@ -110,8 +98,10 @@
                     if (scrollBarWidth > 0) {
                         // for some reason trimming the width by 4px lines everything up better
                         scrollBarWidth -= 4;
-                        var lastColumn = elem.querySelector('table[fixed-header] > tbody > tr:first-child > td:last-child');
-                        lastColumn.style.width = (lastColumn.offsetWidth - scrollBarWidth) + 'px';
+                        var lastColumns = elem.querySelectorAll('table[fixed-header] > tbody > tr > td:last-child');
+                        for (i = 0; i < lastColumns.length; i++) {
+                            lastColumns[i].style.width = (lastColumns[i].offsetWidth - scrollBarWidth) + 'px';
+                        }
                     }
                 });
             }

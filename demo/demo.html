@@ -47,6 +47,10 @@
                 <th>Header 2</th>
                 <th>Header 3</th>
                 <th>Header 4</th>
+                <th>Header 5</th>
+            </tr>
+            <tr>
+                <th colspan="5">Another Header 1 - 4</th>
             </tr>
         </thead>
         <tbody ng-init="items = [1,2,3,4]">
@@ -55,14 +59,18 @@
                 <td>Row {{item}} Col 2</td>
                 <td>Row {{item}} Col 3</td>
                 <td>Row {{item}} Col 4</td>
+                <td>Row {{item}} Col 5</td>
+            </tr>
+            <tr>
+                <td colspan="2">Extra Row Col 1 - 2</td>
+                <td colspan="3">Extra Row Col 3 - 5</td>
             </tr>
         </tbody>
         <tfoot>
             <tr>
-                <td>Footer 1</td>
-                <td>Footer 2</td>
+                <td colspan="2">Footer 1 - 2</td>
                 <td>Footer 3</td>
-                <td>Footer 4</td>
+                <td colspan="2">Footer 4 - 5</td>
             </tr>
         </tfoot>
     </table>
