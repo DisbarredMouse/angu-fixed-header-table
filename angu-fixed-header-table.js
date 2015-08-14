@@ -58,25 +58,33 @@
                     angular.element(clone.querySelectorAll('thead, tbody, tfoot')).css('display', '');
                     $elem.after(wrapper);
 
+                    var longestRowBySection = {};
+
                     // set widths of columns
                     var tableSections = ['tbody', 'thead', 'tfoot'];
                     for (var i = 0; i < tableSections.length; i++) {
-                        var lastRowLength = 0;
-                        var rows = elem.querySelectorAll('table[fixed-header] > ' + tableSections[i] +' > tr');
-                        var cloneRows = clone.querySelectorAll('table[fixed-header] > ' + tableSections[i] +' > tr');
+                        var section = tableSections[i];
+                        var rows = elem.querySelectorAll('table[fixed-header] > ' + section +' > tr');
+                        var cloneRows = clone.querySelectorAll('table[fixed-header] > ' + section +' > tr');
+                        // find the row with the most cells
+                        var mostCells = 0;
+                        longestRowBySection[section] = 0;
                         for (var j = 0; j < rows.length; j++) {
-                            var cells = rows[j].children;
-                            if (cells.length === lastRowLength) continue; // Don't bother applying width to rows that have the same number of columns as the prev. row
-                            lastRowLength = cells.length;
-                            for (var k = 0; k < cells.length; k++) {
-                                cells[k].style.width = cloneRows[j].children[k].offsetWidth + 'px';
+                            var cellCount = rows[j].childElementCount;
+                            if (cellCount > mostCells) {
+                                mostCells = cellCount;
+                                longestRowBySection[section] = j;
                             }
+                        }                        
+                        var cells = angular.isDefined(rows[longestRowBySection[section]]) ? rows[longestRowBySection[section]].children : [];
+                        for (var k = 0; k < cells.length; k++) {
+                            cells[k].style.width = cloneRows[longestRowBySection[section]].children[k].offsetWidth + 'px';
                         }
                     }
                     
                     //Done with the math. We can get rid of the clone.
                     angular.element(wrapper).remove();
-
+                    
                     // set css styles on thead and tbody
                     angular.element(elem.querySelectorAll('table[fixed-header] > thead, table[fixed-header] > tfoot')).css('display', 'block');
                     angular.element(elem.querySelector('table[fixed-header] > tbody')).css({
@@ -85,12 +93,12 @@
                         'max-height': $attrs.maxTableHeight || 'inherit',
                         'overflow': 'auto'
                     });
-
+                    
                     // Fix tr inheritance of tbody height in IE9.
                     // This whole directive doesn't actually work in IE9 but this fix
                     // makes the table look ok when it degrades to a normal table
                     angular.element(elem.querySelectorAll('table[fixed-header] > tbody > tr')).css('height', 'auto');
-
+                    
                     // reduce width of last column by width of scrollbar
                     var tbody = elem.querySelector('table[fixed-header] > tbody');
                     var scrollBarWidth = tbody.offsetWidth - tbody.clientWidth;
@@ -98,11 +106,9 @@
                     if (scrollBarWidth > 0) {
                         // for some reason trimming the width by 4px lines everything up better
                         scrollBarWidth -= 4;
-                        var lastColumns = elem.querySelectorAll('table[fixed-header] > tbody > tr > td:last-child');
-                        for (i = 0; i < lastColumns.length; i++) {
-                            lastColumns[i].style.width = (lastColumns[i].offsetWidth - scrollBarWidth) + 'px';
-                        }
-                    }
+                        var lastColumn = elem.querySelector('table[fixed-header] > tbody > tr:nth-child(' + (longestRowBySection.tbody + 1) + ') > td:last-child');
+                        lastColumn.style.width = (lastColumn.offsetWidth - scrollBarWidth) + 'px';
+                    }                    
                 });
             }
 
